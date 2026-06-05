@@ -1,7 +1,26 @@
+import threading
+from flask import Flask
+import os
+import time
+
+# Unga original functions/imports
 from news_fetch import get_news
 from ai_report import generate_report
 from word_report import create_doc
 from email_send import send_email
+
+# --- Render-gaga oru Dummy Flask Web Server ---
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "AI News Agent is running smoothly in the background!"
+
+def run_flask():
+    # Render supply panra Port-la server-a run panrom
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+# ----------------------------------------------
 
 def main():
     print("\n🔄 Fetching AI News...\n")
@@ -36,4 +55,14 @@ def main():
     print("\n🎉 DONE SUCCESSFULLY!")
 
 if __name__ == "__main__":
+    # 1. First, Flask server-a oru thani thread-la background-la start panrom
+    # Idhanala Render port check pass aagidhum, error varadhu!
+    threading.Thread(target=run_flask, daemon=True).start()
+    
+    # 2. Unga original AI Agent code-a run panrom
     main()
+    
+    # 3. Code mudinjadhuku அப்றம் Render service closed aagama iruka continuous keep-alive loop
+    print("\n💤 AI Agent entering background sleep mode...")
+    while True:
+        time.sleep(3600)
